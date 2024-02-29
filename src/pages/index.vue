@@ -1,12 +1,7 @@
 <script setup lang="ts">
-// import { ref } from 'vue';
-
-// defineProps();
-// const emit = defineEmits(['']);
+import { ToDo } from '@/components/pages';
 </script>
 
 <template>
-    <div class="todo">Todo</div>
+    <ToDo />
 </template>
-
-<style scoped lang="scss"></style>

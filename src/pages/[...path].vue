@@ -5,5 +5,3 @@ import { NotFound } from '@/components/pages';
 <template>
     <NotFound />
 </template>
-
-<style scoped lang="scss"></style>

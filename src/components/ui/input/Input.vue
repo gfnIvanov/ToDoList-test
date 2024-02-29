@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 import { VTextField } from 'vuetify/components/VTextField';
 
 import type { InputProps } from './types';
 
 import { computedWidth } from './services';
 
-defineProps<InputProps>();
+const props = defineProps<InputProps>();
+
+const calcWidth = computed(() => computedWidth(props.width));
 </script>
 
 <template>
@@ -15,7 +17,7 @@ defineProps<InputProps>();
         single-line
         variant="outlined"
         :type="type"
-        :style="{ width: computedWidth(width) }"
+        :style="{ width: calcWidth }"
     />
 </template>
 

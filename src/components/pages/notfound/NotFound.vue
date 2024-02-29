@@ -10,8 +10,6 @@ function redirectToMainPage() {
 </script>
 
 <template>
-    <div class="notfound">Страница не найдена</div>
+    <div class="text-h5 head">Страница не найдена</div>
     <Button text="На главную" @click="redirectToMainPage" />
 </template>
-
-<style scoped lang="scss"></style>
