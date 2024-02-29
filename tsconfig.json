@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016",                                        /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2021.String"], /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    "jsx": "preserve",                                         /* Specify what JSX code is generated. */
+    "useDefineForClassFields": true,                           /* Emit ECMAScript-standard-compliant class fields. */
+
+    /* Modules */
+    "module": "es2020",                                        /* Specify what module code is generated. */
+    "moduleResolution": "Bundler",                             /* Specify how TypeScript looks up a file from a given module specifier. */
+    "baseUrl": "./",                                           /* Specify the base directory to resolve non-relative module names. */
+    "paths": {
+      "@/*": ["src/*"],
+    },                                                         /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "resolveJsonModule": true,                                 /* Enable importing .json files. */
+    "noEmit": true,                                            /* Disable emitting files from a compilation. */
+    "esModuleInterop": true,                                   /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,                  /* Ensure that casing is correct in imports. */
+
+    /* Type Checking */
+    "strict": true,                                            /* Enable all strict type-checking options. */
+    "noUnusedLocals": true,                                    /* Enable error reporting when local variables aren't read. */
+    "noUnusedParameters": true,                                /* Raise an error when a function parameter isn't read. */
+    "noFallthroughCasesInSwitch": true,                        /* Enable error reporting for fallthrough cases in switch statements. */
+    "skipLibCheck": true,                                      /* Skip type checking all .d.ts files. */
+    "types": [
+      "unplugin-vue-router/client"
+    ],
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "./src/typed-router.d.ts"
+  ]
+}
