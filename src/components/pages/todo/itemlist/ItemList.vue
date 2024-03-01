@@ -11,10 +11,14 @@ defineProps<{ data: TaskData[]; select: boolean }>();
 
 <template>
     <div class="mb-5">
-        <div class="d-flex" v-for="task in data" :key="task.order">
+        <div class="d-flex item-wrap" v-for="task in data" :key="task.order">
             <VCheckboxBtn v-if="select" /><Item :title="task.title" />
         </div>
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.item-wrap {
+    max-width: 500px;
+}
+</style>
