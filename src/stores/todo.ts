@@ -18,7 +18,9 @@ export const useToDoStore = defineStore('todo', () => {
     }
 
     function $reset(userName: string) {
-        toDoData[userName].length = 0;
+        if (toDoData[userName]) {
+            toDoData[userName].length = 0;
+        }
     }
     return { toDoData, setToDoData, initUserData, $reset };
 });
