@@ -1,34 +1,34 @@
+import { TaskData } from '@/stores/types';
 import { PiniaPluginContext } from 'pinia';
 import { markRaw } from 'vue';
 
+function setData(data: [string, TaskData] | string): void {
+    if (typeof data === 'string') {
+        localStorage.setItem(
+            'auth',
+            JSON.stringify({ name: data, isAuth: true }),
+        );
+    }
+    if (Array.isArray(data)) {
+        const [name, taskData] = data;
+        const lsData = localStorage.getItem(name);
+        if (lsData) {
+            const dataArray = JSON.parse(lsData);
+            dataArray.push(taskData);
+            localStorage.setItem(name, JSON.stringify(dataArray));
+        }
+    }
+}
+
 const authStoreActions = new Map([
     ['$reset', () => localStorage.removeItem('auth')],
-    [
-        'setAuthData',
-        (name: string) => {
-            localStorage.setItem(
-                'auth',
-                JSON.stringify({ name, isAuth: true }),
-            );
-        },
-    ],
+    ['setAuthData', setData],
 ]);
 
 const todoStoreActions = new Map([
     ['$reset', (name: string) => localStorage.removeItem(name)],
     ['initUserData', (name: string) => localStorage.setItem(name, '[]')],
-    [
-        'setToDoData',
-        args => {
-            const [name, taskData] = args;
-            const lsData = localStorage.getItem(name);
-            if (lsData) {
-                const dataArray = JSON.parse(lsData);
-                dataArray.push(taskData);
-                localStorage.setItem(name, JSON.stringify(dataArray));
-            }
-        },
-    ],
+    ['setToDoData', setData],
 ]);
 
 const localStorageActions = new Map([

@@ -21,8 +21,8 @@ const userName = computed(() => {
 });
 
 function logOut() {
+    todoStore.$reset(userName.value);
     authStore.$reset();
-    todoStore.$reset();
     router.push({ name: '/login' });
 }
 </script>

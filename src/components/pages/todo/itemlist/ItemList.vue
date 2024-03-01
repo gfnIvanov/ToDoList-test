@@ -2,12 +2,19 @@
 import type { TaskData } from '@/stores/types';
 
 import { defineProps } from 'vue';
+import { VCheckboxBtn } from 'vuetify/components/VCheckbox';
 
-defineProps<{ data: TaskData[] }>();
+import Item from './item/Item.vue';
+
+defineProps<{ data: TaskData[]; select: boolean }>();
 </script>
 
 <template>
-    <div v-for="task in data" :key="task.order">{{ task.title }}</div>
+    <div class="mb-5">
+        <div class="d-flex" v-for="task in data" :key="task.order">
+            <VCheckboxBtn v-if="select" /><Item :title="task.title" />
+        </div>
+    </div>
 </template>
 
 <style scoped lang="scss"></style>
