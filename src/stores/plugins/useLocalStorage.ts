@@ -14,14 +14,35 @@ const authStoreActions = new Map([
     ],
 ]);
 
-const localStorageActions = new Map([['auth', authStoreActions]]);
+const todoStoreActions = new Map([
+    ['$reset', (name: string) => localStorage.removeItem(name)],
+    ['initUserData', (name: string) => localStorage.setItem(name, '[]')],
+    [
+        'setToDoData',
+        args => {
+            const [name, taskData] = args;
+            const lsData = localStorage.getItem(name);
+            if (lsData) {
+                const dataArray = JSON.parse(lsData);
+                dataArray.push(taskData);
+                localStorage.setItem(name, JSON.stringify(dataArray));
+            }
+        },
+    ],
+]);
+
+const localStorageActions = new Map([
+    ['auth', authStoreActions],
+    ['todo', todoStoreActions],
+]);
 
 export function setToLocalStorage(context: PiniaPluginContext) {
     const { store } = context;
     store.$onAction(({ name, after, args }) => {
         const action = localStorageActions.get(store.$id)?.get(name);
+        const params = args.length > 1 ? args : args[0];
         if (action) {
-            after(action.bind(null, args[0]));
+            after(action.bind(null, params));
         }
     });
 }

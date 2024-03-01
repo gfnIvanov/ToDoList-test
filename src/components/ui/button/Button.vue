@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
 import { VBtn } from 'vuetify/components/VBtn';
 
 defineProps<{ text: string; type?: 'text' }>();
