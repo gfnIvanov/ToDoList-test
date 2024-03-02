@@ -1,26 +1,17 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import type { TaskData } from './types';
-
-type ToDoData = {
-    [index: string]: TaskData[];
-};
+import { TaskData } from './types';
 
 export const useToDoStore = defineStore('todo', () => {
-    const toDoData: ToDoData = {};
+    const toDoData = ref<TaskData[]>([]);
 
-    function setToDoData(userName: string, taskData: TaskData) {
-        toDoData[userName].push(taskData);
+    function setData(data: TaskData[]) {
+        toDoData.value = data;
     }
 
-    function initUserData(userName: string) {
-        toDoData[userName] = [];
+    function $reset() {
+        toDoData.value.length = 0;
     }
-
-    function $reset(userName: string) {
-        if (toDoData[userName]) {
-            toDoData[userName].length = 0;
-        }
-    }
-    return { toDoData, setToDoData, initUserData, $reset };
+    return { toDoData, setData, $reset };
 });

@@ -1,55 +1,45 @@
-import { TaskData } from '@/stores/types';
+import type { TaskData } from '@/stores/types';
+
 import { PiniaPluginContext } from 'pinia';
 import { markRaw } from 'vue';
 
-function setData(data: [string, TaskData] | string): void {
-    if (typeof data === 'string') {
-        localStorage.setItem(
-            'auth',
-            JSON.stringify({ name: data, isAuth: true }),
-        );
+type ActionArgType = { storeName: string; value: TaskData[] | string };
+
+function setData(data: ActionArgType) {
+    let dataForStorage;
+    if (typeof data.value === 'string') {
+        dataForStorage = JSON.stringify({ name: data.value, isAuth: true });
+    } else if (Array.isArray(data.value)) {
+        dataForStorage = JSON.stringify(data.value);
+    } else {
+        return;
     }
-    if (Array.isArray(data)) {
-        const [name, taskData] = data;
-        const lsData = localStorage.getItem(name);
-        if (lsData) {
-            const dataArray = JSON.parse(lsData);
-            dataArray.push(taskData);
-            localStorage.setItem(name, JSON.stringify(dataArray));
-        }
-    }
+    localStorage.setItem(data.storeName, dataForStorage);
 }
 
-const authStoreActions = new Map([
-    ['$reset', () => localStorage.removeItem('auth')],
-    ['setAuthData', setData],
-]);
-
-const todoStoreActions = new Map([
-    ['$reset', (name: string) => localStorage.removeItem(name)],
-    ['initUserData', (name: string) => localStorage.setItem(name, '[]')],
-    ['setToDoData', setData],
-]);
-
-const localStorageActions = new Map([
-    ['auth', authStoreActions],
-    ['todo', todoStoreActions],
+const storeActions = new Map([
+    [
+        '$reset',
+        (data: ActionArgType) => localStorage.removeItem(data.storeName),
+    ],
+    ['setData', setData],
 ]);
 
 export function setToLocalStorage(context: PiniaPluginContext) {
     const { store } = context;
     store.$onAction(({ name, after, args }) => {
-        const action = localStorageActions.get(store.$id)?.get(name);
-        const params = args.length > 1 ? args : args[0];
+        const action = storeActions.get(name);
         if (action) {
-            after(action.bind(null, params));
+            after(action.bind(null, { storeName: store.$id, value: args[0] }));
         }
     });
 }
 
 export function getFromLocalStorage(context: PiniaPluginContext) {
     const { store } = context;
-    store.fromLocalStorage = markRaw({
-        value: localStorage.getItem('auth'),
-    });
+    let value = localStorage.getItem(store.$id);
+    if (value) {
+        value = JSON.parse(value);
+    }
+    store.fromLocalStorage = markRaw({ value });
 }

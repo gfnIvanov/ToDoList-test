@@ -1,10 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 
-type AuthData = {
-    isAuth: boolean;
-    userName: string;
-};
+import type { AuthData } from './types';
 
 export const useAuthStore = defineStore('auth', () => {
     const authData = reactive<AuthData>({
@@ -16,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isAuth = computed(() => authData.isAuth);
 
-    function setAuthData(name: string) {
+    function setData(name: string) {
         authData.userName = name;
         authData.isAuth = true;
     }
@@ -25,5 +22,5 @@ export const useAuthStore = defineStore('auth', () => {
         authData.userName = '';
         authData.isAuth = false;
     }
-    return { authData, userName, isAuth, setAuthData, $reset };
+    return { authData, userName, isAuth, setData, $reset };
 });

@@ -19,7 +19,7 @@ function toMainPage() {
         password: password.value,
     };
     if (authentication(authData)) {
-        authStore.setAuthData(authData.login);
+        authStore.setData(authData.login);
         error.value = '';
         router.push({ name: '/' });
     } else {
