@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Button, Input } from '@/components/ui';
-import { useAuthStore } from '@/stores/auth';
 import { useToDoStore } from '@/stores/todo';
-import { computed, ref } from 'vue';
+import { TaskData } from '@/stores/types';
+import { ref } from 'vue';
 import { VBtn } from 'vuetify/components/VBtn';
 import { VCard } from 'vuetify/components/VCard';
 import { VDialog } from 'vuetify/components/VDialog';
@@ -13,41 +13,23 @@ import { sortTypes } from './consts';
 import Header from './header/Header.vue';
 import ItemList from './itemlist/ItemList.vue';
 
-const authStore = useAuthStore();
 const todoStore = useToDoStore();
-
-const userName = computed(() => {
-    if (authStore.userName !== '') return authStore.userName;
-    let userName;
-    const authDataLs = authStore.fromLocalStorage.value;
-    if (authDataLs) {
-        userName = JSON.parse(authDataLs).name;
-    }
-    return userName;
-});
 
 const showModal = ref(false);
 const title = ref('');
 const content = ref('');
-const itemListData = ref(todoStore.toDoData[userName.value] || []);
+const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
 const selectItems = ref(false);
 
 function addTask() {
-    let order = 0;
-    const userData = todoStore.toDoData[userName.value];
-    if (userData) {
-        order = userData.length + 1;
-    } else {
-        todoStore.initUserData(userName.value);
-    }
     const taskData = {
         content: content.value,
-        order,
+        order: toDoData.value.length + 1,
         status: false,
         title: title.value,
     };
-    todoStore.setToDoData(userName.value, taskData);
-    itemListData.value = todoStore.toDoData[userName.value].slice(0);
+    toDoData.value.push(taskData);
+    todoStore.setData(toDoData.value);
     content.value = '';
     title.value = '';
     showModal.value = false;
@@ -58,17 +40,17 @@ function addTask() {
     <Header />
     <div class="text-h5 head">Список задач</div>
     <VSwitch
-        v-if="itemListData.length > 0"
+        v-if="toDoData.length > 0"
         label="выбрать несколько"
         v-model="selectItems"
     />
     <VSelect
-        v-if="itemListData.length > 0"
+        v-if="toDoData.length > 0"
         label="сортировать"
         :items="sortTypes"
         variant="underlined"
     />
-    <ItemList :data="itemListData" :select="selectItems" />
+    <ItemList :data="toDoData" :select="selectItems" />
     <VBtn icon="mdi-plus" size="small" @click="showModal = !showModal" />
     <VDialog v-model="showModal" width="auto">
         <VCard class="pa-3">

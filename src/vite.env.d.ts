@@ -1,3 +1,5 @@
+import type { AuthData, TaskData } from '@/stores/types';
+
 import 'pinia';
 
 /// <reference types="vite/client" />
@@ -8,7 +10,7 @@ declare module '*.vue' {
 
 declare module 'pinia' {
     export interface PiniaCustomProperties {
-        get fromLocalStorage(): Ref<string>;
+        get fromLocalStorage(): Ref<AuthData | TaskData[]>;
         set fromLocalStorage(value: Ref<string> | string);
     }
 }

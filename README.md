@@ -14,3 +14,9 @@ yarn install
 ```shell
 yarn run dev
 ```
+
+Авторизация в приложении:
+
+логин - admin
+
+пароль - admin

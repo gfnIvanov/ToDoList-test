@@ -8,12 +8,8 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 router.beforeEach(to => {
-    let isAuthLs;
     const authDataLs = authStore.fromLocalStorage.value;
-    if (authDataLs) {
-        isAuthLs = JSON.parse(authDataLs).isAuth;
-    }
-    if (to.name !== '/login' && !authStore.isAuth && !isAuthLs) {
+    if (to.name !== '/login' && !authStore.isAuth && !authDataLs?.isAuth) {
         return { name: '/login' };
     }
 });

@@ -12,16 +12,12 @@ const router = useRouter();
 
 const userName = computed(() => {
     if (authStore.userName !== '') return authStore.userName;
-    let userName;
     const authDataLs = authStore.fromLocalStorage.value;
-    if (authDataLs) {
-        userName = JSON.parse(authDataLs).name;
-    }
-    return userName;
+    return authDataLs?.name;
 });
 
 function logOut() {
-    todoStore.$reset(userName.value);
+    todoStore.$reset();
     authStore.$reset();
     router.push({ name: '/login' });
 }
