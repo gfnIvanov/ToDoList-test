@@ -20,5 +20,3 @@ const calcWidth = computed(() => computedWidth(props.width));
         :style="{ width: calcWidth }"
     />
 </template>
-
-<style scoped lang="scss"></style>

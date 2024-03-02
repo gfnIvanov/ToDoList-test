@@ -35,5 +35,3 @@ function toMainPage() {
     <Button text="Войти" @click="toMainPage" />
     <div class="error">{{ error }}</div>
 </template>
-
-<style scoped lang="scss"></style>
