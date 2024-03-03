@@ -10,6 +10,7 @@ const props = defineProps<{ data: TaskData[]; order: number }>();
 
 const emit = defineEmits<{
     (e: 'closeModal', payload?: AddEditTaskPayload): void;
+    (e: 'closeModalAfterDel', task?: TaskData): void;
 }>();
 
 const task = computed(() => {
@@ -22,7 +23,7 @@ const content = ref(task.value?.content || '');
 function addEditTask() {
     const taskData = {
         content: content.value,
-        order: props.order ? props.order : props.data.length + 1,
+        order: props.order > 0 ? props.order : props.data.length + 1,
         status: false,
         title: title.value,
     };
@@ -43,6 +44,12 @@ function addEditTask() {
         <template v-slot:actions>
             <div class="w-100 d-flex justify-end">
                 <Button text="Сохранить" @click="addEditTask" />
+                <Button
+                    v-if="order > 0"
+                    text="Удалить"
+                    color="error"
+                    @click="$emit('closeModalAfterDel', task)"
+                />
                 <Button text="Отмена" @click="$emit('closeModal')" />
             </div>
         </template>
