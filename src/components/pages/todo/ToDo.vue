@@ -11,19 +11,32 @@ import { sortTypes } from './consts';
 import Header from './header/Header.vue';
 import ItemList from './itemlist/ItemList.vue';
 import Modal from './modal/Modal.vue';
+import { AddEditTaskPayload } from './types';
 
 const todoStore = useToDoStore();
 
 const showModal = ref(false);
 const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
 const selectItems = ref(false);
+const taskOrder = ref(0);
 
-function afterAddTask(taskData?: TaskData) {
-    if (taskData) {
-        toDoData.value.push(taskData);
+function afterAddEditTask(payload?: AddEditTaskPayload) {
+    if (payload) {
+        const { taskData, task } = payload;
+        if (task) {
+            const taskIndex = toDoData.value.indexOf(task);
+            toDoData.value[taskIndex] = taskData;
+        } else {
+            toDoData.value.push(taskData);
+        }
         todoStore.setData(toDoData.value);
     }
     showModal.value = false;
+}
+
+function showAddEditModal(order?: number) {
+    taskOrder.value = order ? order : 0;
+    showModal.value = true;
 }
 </script>
 
@@ -44,10 +57,14 @@ function afterAddTask(taskData?: TaskData) {
     <ItemList
         :data="toDoData"
         :select="selectItems"
-        @show-edit-modal="showModal = true"
+        @show-edit-modal="showAddEditModal"
     />
-    <VBtn icon="mdi-plus" size="small" @click="showModal = !showModal" />
+    <VBtn icon="mdi-plus" size="small" @click="showAddEditModal" />
     <VDialog v-model="showModal" width="auto">
-        <Modal @close-modal="afterAddTask" />
+        <Modal
+            @close-modal="afterAddEditTask"
+            :data="toDoData"
+            :order="taskOrder"
+        />
     </VDialog>
 </template>

@@ -8,7 +8,7 @@ import Item from './item/Item.vue';
 
 defineProps<{ data: TaskData[]; select: boolean }>();
 
-defineEmits(['showEditModal']);
+defineEmits<{ (e: 'showEditModal', order: number): void }>();
 </script>
 
 <template>
@@ -16,7 +16,7 @@ defineEmits(['showEditModal']);
         <div class="d-flex item-wrap" v-for="task in data" :key="task.order">
             <VCheckboxBtn v-if="select" /><Item
                 :title="task.title"
-                @click="$emit('showEditModal')"
+                @click="$emit('showEditModal', task.order)"
             />
         </div>
     </div>

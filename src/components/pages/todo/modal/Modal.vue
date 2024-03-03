@@ -1,28 +1,38 @@
 <script setup lang="ts">
+import type { AddEditTaskPayload } from '@/components/pages/todo/types';
+
 import { Button, Input } from '@/components/ui';
-import { useToDoStore } from '@/stores/todo';
 import { TaskData } from '@/stores/types';
-import { defineEmits, ref } from 'vue';
+import { computed, defineEmits, defineProps, ref } from 'vue';
 import { VCard } from 'vuetify/components/VCard';
 
-const emit = defineEmits<{ (e: 'closeModal', taskData?: TaskData): void }>();
+const props = defineProps<{ data: TaskData[]; order: number }>();
 
-const todoStore = useToDoStore();
+const emit = defineEmits<{
+    (e: 'closeModal', payload?: AddEditTaskPayload): void;
+}>();
 
-const title = ref('');
-const content = ref('');
-const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
+const task = computed(() => {
+    return props.data.find(task => task.order === props.order);
+});
 
-function addTask() {
+const title = ref(task.value?.title || '');
+const content = ref(task.value?.content || '');
+
+function addEditTask() {
     const taskData = {
         content: content.value,
-        order: toDoData.value.length + 1,
+        order: props.order ? props.order : props.data.length + 1,
         status: false,
         title: title.value,
     };
+    const payload = {
+        taskData,
+        task: task.value,
+    };
     content.value = '';
     title.value = '';
-    emit('closeModal', taskData);
+    emit('closeModal', payload);
 }
 </script>
 
@@ -32,7 +42,7 @@ function addTask() {
         <Input label="Описание" v-model="content" type="text" width="400" />
         <template v-slot:actions>
             <div class="w-100 d-flex justify-end">
-                <Button text="Сохранить" @click="addTask" />
+                <Button text="Сохранить" @click="addEditTask" />
                 <Button text="Отмена" @click="$emit('closeModal')" />
             </div>
         </template>
