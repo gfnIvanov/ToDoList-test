@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
 import { VCard } from 'vuetify/components/VCard';
 
 defineProps<{ title: string }>();
