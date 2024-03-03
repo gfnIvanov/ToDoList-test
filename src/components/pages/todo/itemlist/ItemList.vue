@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SetTaskStatusPayload } from '@/components/pages/todo/types';
 import type { TaskData } from '@/stores/types';
 
 import { defineEmits, defineProps } from 'vue';
@@ -8,15 +9,23 @@ import Item from './item/Item.vue';
 
 defineProps<{ data: TaskData[]; select: boolean }>();
 
-defineEmits<{ (e: 'showEditModal', order: number): void }>();
+const emit = defineEmits<{
+    (e: 'setTaskStatus', payload: SetTaskStatusPayload): void;
+    (e: 'showEditModal', order: number): void;
+}>();
+
+function setStatusPrepare(payload: SetTaskStatusPayload) {
+    emit('setTaskStatus', payload);
+}
 </script>
 
 <template>
     <div class="mb-5">
         <div class="d-flex item-wrap" v-for="task in data" :key="task.order">
             <VCheckboxBtn v-if="select" /><Item
-                :title="task.title"
-                @click="$emit('showEditModal', task.order)"
+                :task="task"
+                @show-edit-modal="$emit('showEditModal', task.order)"
+                @set-task-status="setStatusPrepare"
             />
         </div>
     </div>
