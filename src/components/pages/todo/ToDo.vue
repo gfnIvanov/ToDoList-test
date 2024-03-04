@@ -2,7 +2,7 @@
 import { useRemovedStore } from '@/stores/removed';
 import { useToDoStore } from '@/stores/todo';
 import { TaskData } from '@/stores/types';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { VBtn } from 'vuetify/components/VBtn';
 import { VDialog } from 'vuetify/components/VDialog';
 import { VSelect } from 'vuetify/components/VSelect';
@@ -36,6 +36,7 @@ function afterAddEditTask(payload?: AddEditTaskPayload) {
             toDoData.value.push(taskData);
         }
         todoStore.setData(toDoData.value);
+        sortTasks();
     }
     showModal.value = false;
 }
@@ -64,6 +65,7 @@ function setTaskStatus(payload: SetTaskStatusPayload) {
     const taskIndex = toDoData.value.indexOf(task);
     toDoData.value[taskIndex].status = checkedStatus;
     todoStore.setData(toDoData.value);
+    sortTasks();
 }
 
 function massDeletion() {
@@ -74,12 +76,13 @@ function massDeletion() {
             toDoData.value.splice(taskIndex, 1);
         }
     });
+    toDoData.value.length === 0 && removedStore.$reset();
     todoStore.setData(toDoData.value);
 }
 
-watch(selectItems, () => !selectItems.value && removedStore.$reset());
-
-watch(sortType, () => {
+function sortTasks() {
+    const sortByOrder = () =>
+        toDoData.value.sort((task, nextTask) => task.order - nextTask.order);
     switch (sortType.value) {
         case SortTypesValues.COMPLETED:
             toDoData.value.sort(
@@ -90,10 +93,19 @@ watch(sortType, () => {
             toDoData.value.sort(task => +task.status);
             break;
         case SortTypesValues.INORDER:
-            toDoData.value.sort(task => task.order);
+            sortByOrder();
+            break;
+        default:
+            sortByOrder();
             break;
     }
-});
+}
+
+watch(selectItems, () => !selectItems.value && removedStore.$reset());
+
+watch(sortType, sortTasks);
+
+onMounted(sortTasks);
 </script>
 
 <template>
