@@ -14,6 +14,7 @@ import { sortTypes } from './consts';
 import Header from './header/Header.vue';
 import ItemList from './itemlist/ItemList.vue';
 import Modal from './modal/Modal.vue';
+import { SortTypesValues } from './types';
 
 const todoStore = useToDoStore();
 const removedStore = useRemovedStore();
@@ -23,6 +24,7 @@ const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
 const removedData = ref<Set<number>>(removedStore.removedTasks);
 const selectItems = ref(false);
 const taskOrder = ref(0);
+const sortType = ref('');
 
 function afterAddEditTask(payload?: AddEditTaskPayload) {
     if (payload) {
@@ -76,6 +78,22 @@ function massDeletion() {
 }
 
 watch(selectItems, () => !selectItems.value && removedStore.$reset());
+
+watch(sortType, () => {
+    switch (sortType.value) {
+        case SortTypesValues.COMPLETED:
+            toDoData.value.sort(
+                (task, nextTask) => +nextTask.status - +task.status,
+            );
+            break;
+        case SortTypesValues.UNFULFILLED:
+            toDoData.value.sort(task => +task.status);
+            break;
+        case SortTypesValues.INORDER:
+            toDoData.value.sort(task => task.order);
+            break;
+    }
+});
 </script>
 
 <template>
@@ -88,6 +106,7 @@ watch(selectItems, () => !selectItems.value && removedStore.$reset());
     />
     <VSelect
         v-if="toDoData.length > 0"
+        v-model="sortType"
         label="сортировать"
         :items="sortTypes"
         variant="underlined"
