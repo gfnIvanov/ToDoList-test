@@ -24,7 +24,7 @@ function addEditTask() {
     const taskData = {
         content: content.value,
         order: props.order > 0 ? props.order : props.data.length + 1,
-        status: false,
+        status: task.value ? task.value.status : false,
         title: title.value,
     };
     const payload = {
