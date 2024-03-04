@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useRemovedStore } from '@/stores/removed';
 import { useToDoStore } from '@/stores/todo';
 import { TaskData } from '@/stores/types';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { VBtn } from 'vuetify/components/VBtn';
 import { VDialog } from 'vuetify/components/VDialog';
 import { VSelect } from 'vuetify/components/VSelect';
@@ -15,9 +16,11 @@ import ItemList from './itemlist/ItemList.vue';
 import Modal from './modal/Modal.vue';
 
 const todoStore = useToDoStore();
+const removedStore = useRemovedStore();
 
 const showModal = ref(false);
 const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
+const removedData = ref<Set<number>>(removedStore.removedTasks);
 const selectItems = ref(false);
 const taskOrder = ref(0);
 
@@ -60,6 +63,19 @@ function setTaskStatus(payload: SetTaskStatusPayload) {
     toDoData.value[taskIndex].status = checkedStatus;
     todoStore.setData(toDoData.value);
 }
+
+function massDeletion() {
+    removedStore.removedTasks.forEach(order => {
+        const taskForRemove = toDoData.value.find(task => task.order === order);
+        if (taskForRemove) {
+            const taskIndex = toDoData.value.indexOf(taskForRemove);
+            toDoData.value.splice(taskIndex, 1);
+        }
+    });
+    todoStore.setData(toDoData.value);
+}
+
+watch(selectItems, () => !selectItems.value && removedStore.$reset());
 </script>
 
 <template>
@@ -83,6 +99,14 @@ function setTaskStatus(payload: SetTaskStatusPayload) {
         @set-task-status="setTaskStatus"
     />
     <VBtn icon="mdi-plus" size="small" @click="showAddModal" />
+    <VBtn
+        v-if="removedData.size > 0"
+        class="ml-3"
+        icon="mdi-delete"
+        size="small"
+        color="error"
+        @click="massDeletion"
+    />
     <VDialog v-model="showModal" width="auto">
         <Modal
             @close-modal="afterAddEditTask"
