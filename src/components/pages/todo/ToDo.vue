@@ -76,7 +76,7 @@ function massDeletion() {
             toDoData.value.splice(taskIndex, 1);
         }
     });
-    toDoData.value.length === 0 && removedStore.$reset();
+    removedStore.$reset();
     todoStore.setData(toDoData.value);
 }
 
