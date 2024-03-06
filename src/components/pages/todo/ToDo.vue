@@ -24,7 +24,7 @@ const toDoData = ref<TaskData[]>(todoStore.fromLocalStorage.value || []);
 const removedData = ref<Set<number>>(removedStore.removedTasks);
 const selectItems = ref(false);
 const taskOrder = ref(0);
-const sortType = ref('');
+const sortType = ref(SortTypesValues.INORDER);
 
 function afterAddEditTask(payload?: AddEditTaskPayload) {
     if (payload) {
@@ -116,13 +116,10 @@ onMounted(sortTasks);
         label="выбрать несколько"
         v-model="selectItems"
     />
-    <VSelect
-        v-if="toDoData.length > 0"
-        v-model="sortType"
-        label="сортировать"
-        :items="sortTypes"
-        variant="underlined"
-    />
+    <div v-if="toDoData.length > 0">
+        <div>Сортировать:</div>
+        <VSelect v-model="sortType" :items="sortTypes" variant="underlined" />
+    </div>
     <ItemList
         :data="toDoData"
         :select="selectItems"
